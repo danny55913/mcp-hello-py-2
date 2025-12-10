@@ -17,10 +17,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # HTTP Stream 포트 노출
-EXPOSE 8890
+EXPOSE 8080
 
 # 환경 변수 설정 (기본값)
-ENV PORT=8890
+ENV PORT=8080
 
 # 서버 시작 (기본: HTTP Stream 모드)
 CMD ["python", "src/server.py", "--http-stream"]

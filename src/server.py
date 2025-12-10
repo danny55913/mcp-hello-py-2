@@ -35,7 +35,8 @@ from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP(
     name="mcp-hello",
-    instructions="이름을 받아 한국어로 인사하는 간단한 MCP 서버입니다."
+    instructions="이름을 받아 한국어로 인사하는 간단한 MCP 서버입니다.",
+    stateless_http=True,
 )
 
 

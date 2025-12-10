@@ -228,6 +228,7 @@ def main():
         stdio 모드:
             $ python src/server.py
     """
+    import contextlib
     import sys
     
     if "--http-stream" in sys.argv:
@@ -239,6 +240,11 @@ def main():
         
         port = int(os.environ.get("PORT", 8080))
         
+        @contextlib.asynccontextmanager
+        async def lifespan(app: Starlette):
+            async with mcp.session_manager.run():
+                yield
+        
         app = Starlette(
             routes=[
                 Mount("/", app=mcp.streamable_http_app()),
@@ -246,6 +252,7 @@ def main():
             middleware=[
                 Middleware(TrustedHostMiddleware, allowed_hosts=["*"]),
             ],
+            lifespan=lifespan,
         )
         
         uvicorn.run(app, host="0.0.0.0", port=port)

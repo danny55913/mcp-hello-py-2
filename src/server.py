@@ -28,6 +28,7 @@ Simple Hello MCP Server
 """
 
 import os
+import requests
 
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
@@ -103,6 +104,40 @@ def say_hello_multiple(names: list[str]) -> str:
     
     return "\n".join(greetings)
 
+@mcp.tool()
+def get_clothes_collection_points(
+    service_key: str,
+    page: int = 1,
+    per_page: int = 100
+) -> dict:
+    """
+    공공데이터포털 odcloud '의류수거함 현황' OpenAPI 조회
+
+    Args:
+        service_key: 공공데이터포털 API 인증키
+        page: 불러올 페이지 번호
+        per_page: 페이지당 데이터 개수
+
+    Returns:
+        dict: API JSON 결과
+    """
+    url = "https://api.odcloud.kr/api/15068863/v1/uddi:1c05d16a-d0e5-4fdc-b49f-abd687b6fb5c"
+
+    params = {
+        "serviceKey": service_key,
+        "page": page,
+        "perPage": per_page,
+        "returnType": "json"
+    }
+
+    try:
+        res = requests.get(url, params=params, timeout=10)
+        res.raise_for_status()
+        return res.json()
+
+    except Exception as e:
+        return {"error": str(e)}
+
 
 # ============================================================================
 # Resources (리소스)
@@ -172,7 +207,20 @@ def get_readme() -> str:
 - MCP Python SDK (FastMCP)
 - Pydantic (타입 검증)
 - Starlette + Uvicorn (HTTP Stream)
+
+### 3. get_clothes_collection_points
+공공데이터포털 오픈API(의류수거함 현황)를 조회합니다.
+
+**엔드포인트:**
+- `https://api.odcloud.kr/api/15068863/v1/uddi:1c05d16a-d0e5-4fdc-b49f-abd687b6fb5c`
+
+**필수 파라미터:**
+- `service_key`: API 인증키
+- `page`: 페이지 번호 (기본값 1)
+- `per_page`: 페이지당 데이터 개수 (기본값 100)
 """
+
+
 
 
 # ============================================================================
